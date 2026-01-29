@@ -11,9 +11,9 @@ public class KnightBoard {
     private int movesCount;
     private int nextPlacement;
     private boolean successfulPlacement;
-    //Basic Search
-    int[] xMove = {-2, -1, 1, 2, 2, 1, -1, -2};
-    int[] yMove = {1, 2, 2, 1, -1, -2, -2, -1};
+    // Basic Search
+    int[] xMove = { -2, -1, 1, 2, 2, 1, -1, -2 };
+    int[] yMove = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
     /**
      * Constructor for KnightBoard class, approprietly initalizes variables and
@@ -21,9 +21,9 @@ public class KnightBoard {
      * board
      *
      * @param heuristic method of filling
-     * @param size size of the board
-     * @param xStart starting x position for filling
-     * @param yStart starting y position for filling
+     * @param size      size of the board
+     * @param xStart    starting x position for filling
+     * @param yStart    starting y position for filling
      */
     public KnightBoard(int heuristic, int size, int xStart, int yStart) {
         this.heuristic = heuristic;
@@ -31,7 +31,7 @@ public class KnightBoard {
         this.xStart = xStart;
         this.yStart = yStart;
 
-        this.movesCount = 1; //@FIXIT initial counts as movecount?
+        this.movesCount = 1; // @FIXIT initial counts as movecount?
         this.nextPlacement = 1;
         board = new Position[size][size];
         writeBoard();
@@ -72,7 +72,7 @@ public class KnightBoard {
         }
     }
 
-    //@FIXIT
+    // @FIXIT
     private boolean basicSearch(Position current) {
         if (nextPlacement > (size * size)) {
             return true;
@@ -98,7 +98,7 @@ public class KnightBoard {
         return false;
     }
 
-    //@FIXIT
+    // @FIXIT
     private Position isValid(Position current, int i) {
         int xNext = current.x + xMove[i];
         int yNext = current.y + yMove[i];
@@ -108,7 +108,7 @@ public class KnightBoard {
         return null;
     }
 
-    //@FIXIT
+    // @FIXIT
     private boolean heuristicI(Position current) {
         if (nextPlacement > (size * size)) {
             return true;
@@ -122,13 +122,26 @@ public class KnightBoard {
             }
             int distance = 0;
 
-            eligibleMoves.sort();
+            //Object distances;
+            eligibleMoves.sort((m1, m2) ->{
+
+            int diff = m1.getDistance() - (m2.getDistance());
+            
+            return (diff != 0) ? diff : })//MAYBE WHAT I COULD DO IS ADD WHICH PLACES EACH POSITION
+            //CAN GO TO WHEN I CREATE THEM, EXAMPLE WHEN I CREATE THE POSITION AT 0,0
+            //I ALSO ATTACH IT TO ALL THE POSITIONS THAT ARE ELIGIBLE BY DOING THE CALCULATION THERE
+            //THIS WAY I CAN DO A GETPOSITIONCLOCK, something like that, WHERE I CAN GET THIS ARRAY
+            //THAT STORES THEM ALL
+            }
         }
-    }
 
-    //@FIXIT, COMPARATOR WHERE DISTANCE FIRST, IF THE SAME THEN WHOEVER COMES IN THE CLOCK FIRST
+    // @FIXIT
+    // private boolean
 
-    //@FIXIT
+    // @FIXIT, COMPARATOR WHERE DISTANCE FIRST, IF THE SAME THEN WHOEVER COMES IN
+    // THE CLOCK FIRST
+
+    // @FIXIT
     public String toString() {
         String newMatrixString = "The total number of moves is " + movesCount + "\n";
         for (int i = 0; i < size; i++) {
