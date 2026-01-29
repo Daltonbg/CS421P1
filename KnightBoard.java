@@ -12,8 +12,8 @@ public class KnightBoard {
     private int nextPlacement;
     private boolean successfulPlacement;
     // Basic Search
-    int[] xMove = { -2, -1, 1, 2, 2, 1, -1, -2 };
-    int[] yMove = { 1, 2, 2, 1, -1, -2, -2, -1 };
+    int[] xMove = {-2, -1, 1, 2, 2, 1, -1, -2};
+    int[] yMove = {1, 2, 2, 1, -1, -2, -2, -1};
 
     /**
      * Constructor for KnightBoard class, approprietly initalizes variables and
@@ -21,9 +21,9 @@ public class KnightBoard {
      * board
      *
      * @param heuristic method of filling
-     * @param size      size of the board
-     * @param xStart    starting x position for filling
-     * @param yStart    starting y position for filling
+     * @param size size of the board
+     * @param xStart starting x position for filling
+     * @param yStart starting y position for filling
      */
     public KnightBoard(int heuristic, int size, int xStart, int yStart) {
         this.heuristic = heuristic;
@@ -44,7 +44,7 @@ public class KnightBoard {
         if (heuristic == 0) {
             basicSearch(initial);
         } else if (heuristic == 1) {
-
+            heuristicI(initial);
         } else {
 
         }
@@ -58,18 +58,30 @@ public class KnightBoard {
         int distance = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (j <= size / 2 && i <= size / 2) {
-                    distance = j + i;
-                } else if (j <= size / 2 && i >= size / 2) {
-                    distance = j + size - i;
-                } else if (j >= size / 2 && i <= size / 2) {
-                    distance = size - j + i;
-                } else {
-                    distance = size * 2 - i - j;
-                }
-                board[i][j] = new Position(i, j, distance);
+                distance = calculateDistance(j, i);
+                board[i][j] = new Position(j, i, distance);
             }
         }
+    }
+
+    public Position getPosition(int x, int y) {
+        return board[y][x];
+    }
+
+    //@FIXIT
+    protected int calculateDistance(int x, int y) {
+        int distance = 0;
+        int mid = (size - 1) / 2; // middle index
+        if (x <= mid && y <= mid) {
+            distance = x + y;
+        } else if (x <= mid && y > mid) {
+            distance = x + (size - 1 - y);
+        } else if (x > mid && y <= mid) {
+            distance = (size - 1 - x) + y;
+        } else {
+            distance = (size - 1 - x) + (size - 1 - y);
+        }
+        return distance;
     }
 
     // @FIXIT
@@ -77,8 +89,10 @@ public class KnightBoard {
         if (nextPlacement > (size * size)) {
             return true;
         } else {
-            for (int i = 0; i < 8; i++) {
-                Position next = isValid(current, i);
+            current.calculateMoves(this);
+            ArrayList<Position> eligibleMoves = current.getEligibleMoves();
+            for (int i = 0; i < current.numberMoves(); i++) {
+                Position next = eligibleMoves.get(i);
                 if (next != null) {
                     if (next.getFilling() == 0) {
                         next.setFilling(nextPlacement);
@@ -99,13 +113,11 @@ public class KnightBoard {
     }
 
     // @FIXIT
-    private Position isValid(Position current, int i) {
-        int xNext = current.x + xMove[i];
-        int yNext = current.y + yMove[i];
-        if (xNext < size && yNext < size && xNext >= 0 && yNext >= 0) {
-            return board[xNext][yNext];
+    protected boolean isValid(int x, int y) {
+        if (x < size && y < size && x >= 0 && y >= 0) {
+            return true;
         }
-        return null;
+        return false;
     }
 
     // @FIXIT
@@ -113,34 +125,63 @@ public class KnightBoard {
         if (nextPlacement > (size * size)) {
             return true;
         } else {
-            ArrayList<Position> eligibleMoves = null;
-            for (int i = 0; i < size; i++) {
-                Position nextMove = isValid(current, i);
-                if (nextMove != null) {
-                    eligibleMoves.add(nextMove);
+            current.calculateMoves(this);
+            current.sortEligible();
+            ArrayList<Position> eligibleMoves = current.getEligibleMoves();
+            for (int i = 0; i < current.numberMoves(); i++) {
+                Position next = eligibleMoves.get(i);
+                if (next != null) {
+                    if (next.getFilling() == 0) {
+                        next.setFilling(nextPlacement);
+                        nextPlacement++;
+                        movesCount++;
+                        if (heuristicI(next) == false) {
+                            next.setFilling(0);
+                            nextPlacement--;
+                            continue;
+                        } else {
+                            return true;
+                        }
+                    }
                 }
             }
-            int distance = 0;
+        }
+        return false;
+    }
 
-            //Object distances;
-            eligibleMoves.sort((m1, m2) ->{
-
-            int diff = m1.getDistance() - (m2.getDistance());
-            
-            return (diff != 0) ? diff : })//MAYBE WHAT I COULD DO IS ADD WHICH PLACES EACH POSITION
-            //CAN GO TO WHEN I CREATE THEM, EXAMPLE WHEN I CREATE THE POSITION AT 0,0
-            //I ALSO ATTACH IT TO ALL THE POSITIONS THAT ARE ELIGIBLE BY DOING THE CALCULATION THERE
-            //THIS WAY I CAN DO A GETPOSITIONCLOCK, something like that, WHERE I CAN GET THIS ARRAY
-            //THAT STORES THEM ALL
+        // @FIXIT
+    private boolean heuristicII(Position current) {
+        if (nextPlacement > (size * size)) {
+            return true;
+        } else {
+            current.calculateMoves(this);
+            current.sortEligible();
+            ArrayList<Position> eligibleMoves = current.getEligibleMoves();
+            for (int i = 0; i < current.numberMoves(); i++) {
+                Position next = eligibleMoves.get(i);
+                if (next != null) {
+                    if (next.getFilling() == 0) {
+                        next.setFilling(nextPlacement);
+                        nextPlacement++;
+                        movesCount++;
+                        if (heuristicII(next) == false) {
+                            next.setFilling(0);
+                            nextPlacement--;
+                            continue;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
             }
         }
+        return false;
+    }
 
     // @FIXIT
     // private boolean
-
     // @FIXIT, COMPARATOR WHERE DISTANCE FIRST, IF THE SAME THEN WHOEVER COMES IN
     // THE CLOCK FIRST
-
     // @FIXIT
     public String toString() {
         String newMatrixString = "The total number of moves is " + movesCount + "\n";

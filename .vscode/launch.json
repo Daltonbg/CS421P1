@@ -9,7 +9,7 @@
             "name": "KnightTour",
             "request": "launch",
             "mainClass": "KnightTour",
-            "args": "0 8 0 0"
+            "args": "1 6 0 0"
         }
     ]
 }
