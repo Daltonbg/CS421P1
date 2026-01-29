@@ -133,7 +133,7 @@ public class KnightBoard {
             //THIS WAY I CAN DO A GETPOSITIONCLOCK, something like that, WHERE I CAN GET THIS ARRAY
             //THAT STORES THEM ALL
             }
-    }
+        }
 
     // @FIXIT
     // private boolean
