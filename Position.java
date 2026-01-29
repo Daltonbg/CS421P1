@@ -35,7 +35,15 @@ public class Position {
     }
 
     protected void sortEligible() {
-        eligibleMoves.sort(Comparator.comparingInt(p -> p.distance));
+        eligibleMoves.sort(Comparator.comparingInt(pos -> pos.distance));
+    }
+
+    protected void sortEligibleII(KnightBoard board) {
+        eligibleMoves.sort((p1, p2) -> {
+            int onward1 = board.countMoves(p1);
+            int onward2 = board.countMoves(p2);
+            return Integer.compare(onward1, onward2);
+        });
     }
 
     protected int getFilling() {
@@ -50,19 +58,19 @@ public class Position {
         return distance;
     }
 
-    protected int numberMoves(){
+    protected int numberMoves() {
         return eligibleMoves.size();
     }
 
-    protected ArrayList<Position> getEligibleMoves(){
+    protected ArrayList<Position> getEligibleMoves() {
         return eligibleMoves;
     }
 
-    protected int getX(){
+    protected int getX() {
         return x;
     }
 
-    protected int getY(){
+    protected int getY() {
         return y;
     }
 }

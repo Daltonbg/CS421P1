@@ -10,7 +10,7 @@ public class KnightBoard {
     private int yStart;
     private int movesCount;
     private int nextPlacement;
-    private boolean successfulPlacement;
+    private boolean solutionFound;
     // Basic Search
     int[] xMove = {-2, -1, 1, 2, 2, 1, -1, -2};
     int[] yMove = {1, 2, 2, 1, -1, -2, -2, -1};
@@ -35,18 +35,23 @@ public class KnightBoard {
         this.nextPlacement = 1;
         board = new Position[size][size];
         writeBoard();
-        this.successfulPlacement = false;
 
         Position initial = board[xStart][yStart];
         initial.setFilling(nextPlacement);
         nextPlacement++;
 
         if (heuristic == 0) {
-            basicSearch(initial);
+            if (basicSearch(initial)){
+                solutionFound = true;
+            }
         } else if (heuristic == 1) {
-            heuristicI(initial);
+            if(heuristicI(initial)){
+                solutionFound = true;
+            }
         } else {
-
+            if(heuristicII(initial)){
+                solutionFound = true;
+            }
         }
     }
 
@@ -149,13 +154,13 @@ public class KnightBoard {
         return false;
     }
 
-        // @FIXIT
+    // @FIXIT
     private boolean heuristicII(Position current) {
         if (nextPlacement > (size * size)) {
             return true;
         } else {
             current.calculateMoves(this);
-            current.sortEligible();
+            current.sortEligibleII(this);
             ArrayList<Position> eligibleMoves = current.getEligibleMoves();
             for (int i = 0; i < current.numberMoves(); i++) {
                 Position next = eligibleMoves.get(i);
@@ -178,6 +183,21 @@ public class KnightBoard {
         return false;
     }
 
+    protected int countMoves(Position pos) {
+        int count = 0;
+        int[] xMove = {-2, -1, 1, 2, 2, 1, -1, -2};
+        int[] yMove = {1, 2, 2, 1, -1, -2, -2, -1};
+
+        for (int i = 0; i < 8; i++) {
+            int xNext = pos.getX() + xMove[i];
+            int yNext = pos.getY() + yMove[i];
+            if (isValid(xNext, yNext) && getPosition(xNext, yNext).getFilling() == 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     // @FIXIT
     // private boolean
     // @FIXIT, COMPARATOR WHERE DISTANCE FIRST, IF THE SAME THEN WHOEVER COMES IN
@@ -185,12 +205,16 @@ public class KnightBoard {
     // @FIXIT
     public String toString() {
         String newMatrixString = "The total number of moves is " + movesCount + "\n";
-        for (int i = 0; i < size; i++) {
-            newMatrixString += "\t";
-            for (int j = 0; j < size; j++) {
-                newMatrixString += board[i][j].getFilling() + " ";
+        if (solutionFound == true) {
+            for (int i = 0; i < size; i++) {
+                newMatrixString += "\t";
+                for (int j = 0; j < size; j++) {
+                    newMatrixString += board[i][j].getFilling() + " ";
+                }
+                newMatrixString += "\n";
             }
-            newMatrixString += "\n";
+        } else {
+            newMatrixString += "No solution found!";
         }
         return newMatrixString;
 
