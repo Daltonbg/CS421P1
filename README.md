@@ -15,7 +15,6 @@ from the current position OR 1 row and 2 columns.
 
 INCLUDED FILES:
 
- e.g.
  * KnightBoard.java - main algorithm file
  * KnightTour.java - driver file
  * Position.java - helper class file
